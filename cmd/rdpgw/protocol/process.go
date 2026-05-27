@@ -181,6 +181,14 @@ func (p *Processor) Process(ctx context.Context) error {
 				p.tunnel.Write(msg)
 				p.state = SERVER_STATE_CLOSED
 				return nil
+			case PKT_TYPE_EXTENDED_AUTH_MSG:
+				log.Printf("Extended auth message (PAA) from client %s", p.tunnel.RemoteAddr)
+				buf := new(bytes.Buffer)
+				binary.Write(buf, binary.LittleEndian, uint32(0))
+				binary.Write(buf, binary.LittleEndian, uint16(HTTP_EXTENDED_AUTH_PAA))
+				binary.Write(buf, binary.LittleEndian, uint16(0))
+				msg := createPacket(PKT_TYPE_EXTENDED_AUTH_MSG, buf.Bytes())
+				p.tunnel.Write(msg)
 			default:
 				log.Printf("Unknown packet (size %d): %x", message.length, message.msg)
 			}
