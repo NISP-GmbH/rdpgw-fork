@@ -96,6 +96,7 @@ func (p *Processor) Process(ctx context.Context) error {
 				}
 				msg := p.tunnelResponse(ERROR_SUCCESS)
 				p.tunnel.Write(msg)
+				log.Printf("Tunnel create response sent, waiting for next packet (state=%d)", SERVER_STATE_TUNNEL_CREATE)
 				p.state = SERVER_STATE_TUNNEL_CREATE
 			case PKT_TYPE_TUNNEL_AUTH:
 				log.Printf("Tunnel auth")
