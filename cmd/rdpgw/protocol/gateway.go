@@ -11,8 +11,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/identity"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/transport"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/identity"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/transport"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/patrickmn/go-cache"

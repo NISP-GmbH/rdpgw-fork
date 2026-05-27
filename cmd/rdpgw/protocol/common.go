@@ -11,7 +11,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/transport"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/transport"
 )
 
 const (

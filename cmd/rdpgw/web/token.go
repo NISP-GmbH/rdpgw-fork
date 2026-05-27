@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/security"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/security"
 	"log"
 	"net/http"
 )

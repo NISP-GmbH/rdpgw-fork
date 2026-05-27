@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/security"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/security"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/env"

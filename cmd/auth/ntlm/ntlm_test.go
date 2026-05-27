@@ -2,9 +2,9 @@ package ntlm
 
 import (
 	"encoding/base64"
-	"github.com/bolkedebruin/rdpgw/cmd/auth/config"
-	"github.com/bolkedebruin/rdpgw/cmd/auth/database"
-	"github.com/bolkedebruin/rdpgw/shared/auth"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/auth/config"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/auth/database"
+	"github.com/NISP-GmbH/rdpgw-fork/shared/auth"
 	"github.com/m7913d/go-ntlm/ntlm"
 	"testing"
 	"log"

@@ -17,9 +17,9 @@ import (
 	"time"
 
 	"github.com/andrewheberle/rdpsign"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/identity"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/rdp"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/security"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/identity"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/rdp"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/security"
 	"github.com/spf13/afero"
 )
 

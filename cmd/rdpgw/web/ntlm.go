@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/identity"
-	"github.com/bolkedebruin/rdpgw/shared/auth"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/identity"
+	"github.com/NISP-GmbH/rdpgw-fork/shared/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

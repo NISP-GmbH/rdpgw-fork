@@ -3,7 +3,7 @@ package rdp
 import (
 	"errors"
 	"fmt"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/rdp/koanf/parsers/rdp"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/rdp/koanf/parsers/rdp"
 	"github.com/fatih/structs"
 	"github.com/go-viper/mapstructure/v2"
 	"github.com/knadh/koanf/providers/file"

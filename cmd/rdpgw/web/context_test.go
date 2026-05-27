@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/identity"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/identity"
 )
 
 // TestEnrichContextXForwardedForRequiresTrustedProxy asserts that the

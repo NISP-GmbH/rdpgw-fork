@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/identity"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/protocol"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/identity"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/protocol"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/go-jose/go-jose/v4"
 	"github.com/go-jose/go-jose/v4/jwt"

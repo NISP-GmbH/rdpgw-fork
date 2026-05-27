@@ -4,12 +4,12 @@ import (
 	"net"
 	"time"
 
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/identity"
-	"github.com/bolkedebruin/rdpgw/cmd/rdpgw/transport"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/identity"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/rdpgw/transport"
 )
 
 const (
-	CtxTunnel = "github.com/bolkedebruin/rdpgw/tunnel"
+	CtxTunnel = "github.com/NISP-GmbH/rdpgw-fork/tunnel"
 )
 
 type Tunnel struct {

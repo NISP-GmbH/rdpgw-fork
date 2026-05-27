@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/bolkedebruin/rdpgw/cmd/auth/config"
+	"github.com/NISP-GmbH/rdpgw-fork/cmd/auth/config"
 	"testing"
 )
 

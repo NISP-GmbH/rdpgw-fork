@@ -1,4 +1,4 @@
-module github.com/bolkedebruin/rdpgw
+module github.com/NISP-GmbH/rdpgw-fork
 
 go 1.24.2
 
