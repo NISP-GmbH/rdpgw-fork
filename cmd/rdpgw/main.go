@@ -176,6 +176,7 @@ func main() {
 		Handler:   r,
 		TLSConfig: cfg,
 	}
+	server.TLSNextProto = make(map[string]func(*http.Server, *tls.Conn, http.Handler))
 
 	log.Printf("rdpgw starting on %s (hosts=%v, dpm=%v)", addr, conf.Server.Hosts, dpmInteg != nil)
 	if err := server.ListenAndServeTLS("", ""); err != nil {
