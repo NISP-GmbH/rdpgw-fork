@@ -185,9 +185,11 @@ func (p *Processor) Process(ctx context.Context) error {
 			case PKT_TYPE_EXTENDED_AUTH_MSG, 0x13:
 				log.Printf("Extended auth message (type=0x%x, size=%d) from client %s, body: %x",
 					message.packetType, message.length, p.tunnel.RemoteAddr, message.msg)
-				msg := createPacket(uint16(message.packetType), message.msg)
+				buf := new(bytes.Buffer)
+				binary.Write(buf, binary.LittleEndian, uint32(0))
+				msg := createPacket(uint16(message.packetType), buf.Bytes())
 				p.tunnel.Write(msg)
-				log.Printf("Extended auth response sent (echoed client body)")
+				log.Printf("Extended auth response sent (error_code=0, %d bytes)", len(buf.Bytes()))
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
 			}
