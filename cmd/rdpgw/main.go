@@ -175,7 +175,7 @@ func main() {
 		Handler:   r,
 		TLSConfig: cfg,
 	}
-	server.TLSNextProto = make(map[string]func(*http.Server, *tls.Conn, http.Handler))
+	// HTTP/2 enabled — WebSocket transport handles single-connection clients
 
 	log.Printf("rdpgw starting on %s (hosts=%v, dpm=%v)", addr, conf.Server.Hosts, dpmInteg != nil)
 	if err := server.ListenAndServeTLS("", ""); err != nil {
