@@ -183,8 +183,11 @@ func (p *Processor) Process(ctx context.Context) error {
 				p.state = SERVER_STATE_CLOSED
 				return nil
 			case PKT_TYPE_EXTENDED_AUTH_MSG, 0x13:
-				log.Printf("Extended auth message (type=0x%x, size=%d) from client %s, body: %x — ignored (no response needed)",
+				log.Printf("Extended auth message (type=0x%x, size=%d) from client %s, body: %x",
 					message.packetType, message.length, p.tunnel.RemoteAddr, message.msg)
+				msg := p.tunnelAuthResponse(ERROR_SUCCESS)
+				p.tunnel.Write(msg)
+				log.Printf("Extended auth: sent tunnelAuthResponse as reply")
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
 			}
