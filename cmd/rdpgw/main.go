@@ -157,7 +157,10 @@ func main() {
 		addr = ":8389"
 	}
 
-	cfg := &tls.Config{MinVersion: tls.VersionTLS12}
+	cfg := &tls.Config{
+		MinVersion: tls.VersionTLS12,
+		NextProtos: []string{"http/1.1"},
+	}
 	if conf.Server.CertFile != "" && conf.Server.KeyFile != "" {
 		cert, err := tls.LoadX509KeyPair(conf.Server.CertFile, conf.Server.KeyFile)
 		if err != nil {

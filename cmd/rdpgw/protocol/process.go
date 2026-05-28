@@ -183,8 +183,13 @@ func (p *Processor) Process(ctx context.Context) error {
 				p.state = SERVER_STATE_CLOSED
 				return nil
 			case PKT_TYPE_EXTENDED_AUTH_MSG, 0x13:
-				log.Printf("TsProxyMakeTunnelCall (type=0x%x) from client — async msg subscription, no response",
-					message.packetType)
+				log.Printf("Extended auth message (type=0x%x) from client %s", message.packetType, p.tunnel.RemoteAddr)
+				buf := new(bytes.Buffer)
+				binary.Write(buf, binary.LittleEndian, uint32(0))
+				binary.Write(buf, binary.LittleEndian, uint16(HTTP_EXTENDED_AUTH_PAA))
+				binary.Write(buf, binary.LittleEndian, uint16(0))
+				msg := createPacket(uint16(message.packetType), buf.Bytes())
+				p.tunnel.Write(msg)
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
 			}
