@@ -44,7 +44,7 @@ const tunnelId = 10
 
 func (p *Processor) Process(ctx context.Context) error {
 	for {
-		//pt, sz, pkt, err := p.tunnel.Read()
+		log.Printf("[PROC] Waiting for packet (state=%d)...", p.state)
 		messages, err := p.tunnel.Read()
 		if err != nil {
 			log.Printf("Cannot read message from stream %p", err)
@@ -187,7 +187,13 @@ func (p *Processor) Process(ctx context.Context) error {
 					message.packetType, len(message.msg), p.tunnel.RemoteAddr)
 				log.Printf("  raw payload hex: %x", message.msg)
 				log.Printf("  current state: %d (TUNNEL_AUTHORIZE=%d)", p.state, SERVER_STATE_TUNNEL_AUTHORIZE)
-				// no response — client sends this as PAA completion ack, not expecting a reply
+				buf := new(bytes.Buffer)
+				binary.Write(buf, binary.LittleEndian, uint32(0))
+				binary.Write(buf, binary.LittleEndian, uint16(HTTP_EXTENDED_AUTH_PAA))
+				binary.Write(buf, binary.LittleEndian, uint16(0))
+				msg := createPacket(PKT_TYPE_EXTENDED_AUTH_MSG, buf.Bytes())
+				log.Printf("  responding with PKT_TYPE_EXTENDED_AUTH_MSG (0x3): %x", msg)
+				p.tunnel.Write(msg)
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
 			}
