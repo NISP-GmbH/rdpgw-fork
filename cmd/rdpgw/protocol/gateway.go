@@ -66,12 +66,6 @@ func (g *Gateway) HandleGatewayProtocol(w http.ResponseWriter, r *http.Request) 
 	id := identity.FromRequestCtx(r)
 
 	connId := r.Header.Get(rdgConnectionIdKey)
-
-	log.Printf("[GW] %s %s connId=%s upgrade=%v ws=%v",
-		r.Method, r.URL.Path, connId,
-		headerHasToken(r.Header, "Connection", "upgrade"),
-		headerHasToken(r.Header, "Upgrade", "websocket"))
-
 	x, found := c.Get(connId)
 	if !found {
 		t = &Tunnel{

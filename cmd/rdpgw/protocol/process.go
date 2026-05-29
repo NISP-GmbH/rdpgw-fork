@@ -44,7 +44,6 @@ const tunnelId = 10
 
 func (p *Processor) Process(ctx context.Context) error {
 	for {
-		log.Printf("[PROC] Waiting for packet (state=%d)...", p.state)
 		messages, err := p.tunnel.Read()
 		if err != nil {
 			log.Printf("Cannot read message from stream %p", err)
@@ -183,19 +182,12 @@ func (p *Processor) Process(ctx context.Context) error {
 				p.state = SERVER_STATE_CLOSED
 				return nil
 			case PKT_TYPE_EXTENDED_AUTH_MSG, 0x13:
-				log.Printf("Extended auth message (type=0x%x, len=%d) from client %s",
-					message.packetType, len(message.msg), p.tunnel.RemoteAddr)
-				log.Printf("  raw payload hex: %x", message.msg)
-				log.Printf("  current state: %d (TUNNEL_AUTHORIZE=%d)", p.state, SERVER_STATE_TUNNEL_AUTHORIZE)
-				// respond with 0x13: errorCode=0, authResult=0 (auth complete, no follow-up)
+				log.Printf("Extended auth (type=0x%x) from %s", message.packetType, p.tunnel.RemoteAddr)
 				buf := new(bytes.Buffer)
 				binary.Write(buf, binary.LittleEndian, uint32(0))
 				binary.Write(buf, binary.LittleEndian, uint32(HTTP_EXTENDED_AUTH_NONE))
 				msg := createPacket(0x13, buf.Bytes())
-				log.Printf("  responding with 0x13 {error=0, auth=NONE}: %x", msg)
 				p.tunnel.Write(msg)
-				p.state = SERVER_STATE_TUNNEL_AUTHORIZE
-				log.Printf("  state remains TUNNEL_AUTHORIZE, waiting for channel create")
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
 			}
