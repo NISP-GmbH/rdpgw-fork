@@ -187,12 +187,11 @@ func (p *Processor) Process(ctx context.Context) error {
 					message.packetType, len(message.msg), p.tunnel.RemoteAddr)
 				log.Printf("  raw payload hex: %x", message.msg)
 				log.Printf("  current state: %d (TUNNEL_AUTHORIZE=%d)", p.state, SERVER_STATE_TUNNEL_AUTHORIZE)
+				// respond with just errorCode=0 (4 bytes) — MS-TSGU PAA completion ack
 				buf := new(bytes.Buffer)
 				binary.Write(buf, binary.LittleEndian, uint32(0))
-				binary.Write(buf, binary.LittleEndian, uint16(HTTP_EXTENDED_AUTH_PAA))
-				binary.Write(buf, binary.LittleEndian, uint16(0))
-				msg := createPacket(PKT_TYPE_EXTENDED_AUTH_MSG, buf.Bytes())
-				log.Printf("  responding with PKT_TYPE_EXTENDED_AUTH_MSG (0x3): %x", msg)
+				msg := createPacket(uint16(message.packetType), buf.Bytes())
+				log.Printf("  responding with 0x%x (4-byte errorCode only): %x", message.packetType, msg)
 				p.tunnel.Write(msg)
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
