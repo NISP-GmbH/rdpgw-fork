@@ -44,6 +44,10 @@ func DPMTokenAuthContext(next http.Handler) http.Handler {
 		id.SetAttribute(identity.AttrRemoteAddr, r.RemoteAddr)
 
 		log.Printf("[DPM-MW] %s %s from %s", r.Method, r.URL.Path, remoteHost)
+		if r.Method == "GET" || r.Method == "RDG_OUT_DATA" {
+			log.Printf("[DPM-MW] Headers: Connection=%q Upgrade=%q Rdg-Connection-Id=%q",
+				r.Header.Get("Connection"), r.Header.Get("Upgrade"), r.Header.Get("Rdg-Connection-Id"))
+		}
 
 		ctx := identity.AddToRequestCtx(id, r)
 		next.ServeHTTP(w, ctx)

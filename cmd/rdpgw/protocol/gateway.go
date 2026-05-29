@@ -66,6 +66,12 @@ func (g *Gateway) HandleGatewayProtocol(w http.ResponseWriter, r *http.Request) 
 	id := identity.FromRequestCtx(r)
 
 	connId := r.Header.Get(rdgConnectionIdKey)
+
+	log.Printf("[GW] %s %s connId=%s upgrade=%v ws=%v",
+		r.Method, r.URL.Path, connId,
+		headerHasToken(r.Header, "Connection", "upgrade"),
+		headerHasToken(r.Header, "Upgrade", "websocket"))
+
 	x, found := c.Get(connId)
 	if !found {
 		t = &Tunnel{
@@ -83,31 +89,31 @@ func (g *Gateway) HandleGatewayProtocol(w http.ResponseWriter, r *http.Request) 
 	}
 	ctx = context.WithValue(ctx, CtxTunnel, t)
 
-	if r.Method == MethodRDGOUT {
-		if headerHasToken(r.Header, "Connection", "upgrade") && headerHasToken(r.Header, "Upgrade", "websocket") {
-			r.Method = "GET" // upgrader requires GET
-			conn, err := upgrader.Upgrade(w, r, nil)
-			if err != nil {
-				// Upgrade has already written an HTTP error response on the
-				// wire, so we cannot transparently fall back to the legacy
-				// protocol here. The header pre-check above handles the
-				// real-world fallback case: clients or reverse proxies that
-				// don't send the Upgrade/Connection tokens route to legacy
-				// without ever touching the upgrader.
-				log.Printf("cannot upgrade connection to websocket: %v", err)
-				return
-			}
-			defer conn.Close()
+	isUpgrade := headerHasToken(r.Header, "Connection", "upgrade") && headerHasToken(r.Header, "Upgrade", "websocket")
 
-			if err := g.setSendReceiveBuffers(conn.UnderlyingConn()); err != nil {
-				log.Printf("cannot set send/receive buffers: %v", err)
-			}
-			g.handleWebsocketProtocol(ctx, conn, t)
+	if isUpgrade && (r.Method == MethodRDGOUT || r.Method == "GET") {
+		log.Printf("[GW] WebSocket upgrade from %s (method=%s)", t.RemoteAddr, r.Method)
+		r.Method = "GET" // upgrader requires GET
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Printf("cannot upgrade connection to websocket: %v", err)
 			return
 		}
+		defer conn.Close()
+
+		if err := g.setSendReceiveBuffers(conn.UnderlyingConn()); err != nil {
+			log.Printf("cannot set send/receive buffers: %v", err)
+		}
+		g.handleWebsocketProtocol(ctx, conn, t)
+		return
+	}
+
+	if r.Method == MethodRDGOUT {
 		g.handleLegacyProtocol(w, r.WithContext(ctx), t)
 	} else if r.Method == MethodRDGIN {
 		g.handleLegacyProtocol(w, r.WithContext(ctx), t)
+	} else {
+		log.Printf("[GW] Unhandled method %s from %s (no WebSocket headers)", r.Method, t.RemoteAddr)
 	}
 }
 

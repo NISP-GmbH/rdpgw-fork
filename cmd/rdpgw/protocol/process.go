@@ -183,12 +183,20 @@ func (p *Processor) Process(ctx context.Context) error {
 				p.state = SERVER_STATE_CLOSED
 				return nil
 			case PKT_TYPE_EXTENDED_AUTH_MSG, 0x13:
-				log.Printf("Extended auth message (type=0x%x) from client %s", message.packetType, p.tunnel.RemoteAddr)
+				log.Printf("Extended auth message (type=0x%x, len=%d) from client %s",
+					message.packetType, len(message.msg), p.tunnel.RemoteAddr)
+				log.Printf("  raw payload hex: %x", message.msg)
+				if len(message.msg) > 0 {
+					log.Printf("  raw payload bytes: %v", message.msg)
+				}
+				log.Printf("  current state: %d (TUNNEL_AUTHORIZE=%d)", p.state, SERVER_STATE_TUNNEL_AUTHORIZE)
+				// respond with same packet type, error=0, auth=PAA, reserved=0
 				buf := new(bytes.Buffer)
 				binary.Write(buf, binary.LittleEndian, uint32(0))
 				binary.Write(buf, binary.LittleEndian, uint16(HTTP_EXTENDED_AUTH_PAA))
 				binary.Write(buf, binary.LittleEndian, uint16(0))
 				msg := createPacket(uint16(message.packetType), buf.Bytes())
+				log.Printf("  response hex: %x", msg)
 				p.tunnel.Write(msg)
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
