@@ -270,15 +270,12 @@ func (p *Processor) tunnelRequest(data []byte) (caps uint32, cookie string) {
 func (p *Processor) tunnelResponse(errorCode int) []byte {
 	buf := new(bytes.Buffer)
 
-	binary.Write(buf, binary.LittleEndian, uint16(0))                                                                    // server version
-	binary.Write(buf, binary.LittleEndian, uint32(errorCode))                                                            // error code
-	binary.Write(buf, binary.LittleEndian, uint16(HTTP_TUNNEL_RESPONSE_FIELD_TUNNEL_ID|HTTP_TUNNEL_RESPONSE_FIELD_CAPS)) // fields present
-	binary.Write(buf, binary.LittleEndian, uint16(0))                                                                    // reserved
+	binary.Write(buf, binary.LittleEndian, uint16(0))                                    // server version
+	binary.Write(buf, binary.LittleEndian, uint32(errorCode))                             // error code
+	binary.Write(buf, binary.LittleEndian, uint16(HTTP_TUNNEL_RESPONSE_FIELD_TUNNEL_ID)) // fields: tunnel ID only, no caps
+	binary.Write(buf, binary.LittleEndian, uint16(0))                                    // reserved
 
-	// tunnel id (when is it used?)
 	binary.Write(buf, binary.LittleEndian, uint32(tunnelId))
-
-	binary.Write(buf, binary.LittleEndian, uint32(HTTP_CAPABILITY_IDLE_TIMEOUT))
 
 	return createPacket(PKT_TYPE_TUNNEL_RESPONSE, buf.Bytes())
 }
