@@ -98,6 +98,7 @@ func main() {
 	gw := protocol.Gateway{
 		TokenAuth:   true,
 		IdleTimeout: 0,
+		RedirectFlags: protocol.RedirectFlags{EnableAll: true},
 		CheckPAACookie: func(ctx context.Context, token string) (bool, error) {
 			log.Printf("[DPM-PAA] CheckPAACookie called, token length=%d", len(token))
 			if dpmInteg != nil && dpmInteg.Auth != nil {

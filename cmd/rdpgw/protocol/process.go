@@ -212,7 +212,7 @@ func (p *Processor) handshakeResponse(major byte, minor byte, caps uint16, error
 	buf := new(bytes.Buffer)
 	binary.Write(buf, binary.LittleEndian, uint32(errorCode)) // error_code
 	buf.Write([]byte{major, minor})
-	binary.Write(buf, binary.LittleEndian, uint16(0))    // server version
+	binary.Write(buf, binary.LittleEndian, uint16(1))    // server version (1 = Win2008R2+)
 	binary.Write(buf, binary.LittleEndian, uint16(caps)) // extended auth
 
 	return createPacket(PKT_TYPE_HANDSHAKE_RESPONSE, buf.Bytes())
