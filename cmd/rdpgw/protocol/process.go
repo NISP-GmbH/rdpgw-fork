@@ -187,13 +187,18 @@ func (p *Processor) Process(ctx context.Context) error {
 					message.packetType, len(message.msg), p.tunnel.RemoteAddr)
 				log.Printf("  raw payload hex: %x", message.msg)
 				log.Printf("  current state: %d (TUNNEL_AUTHORIZE=%d)", p.state, SERVER_STATE_TUNNEL_AUTHORIZE)
-				// respond with PKT_TYPE_EXTENDED_AUTH_MSG (0x3): errorCode + authScheme only
+				// send extended auth response (0x03): errorCode + authScheme + dataLen=0
 				buf := new(bytes.Buffer)
 				binary.Write(buf, binary.LittleEndian, uint32(0))
 				binary.Write(buf, binary.LittleEndian, uint16(HTTP_EXTENDED_AUTH_PAA))
+				binary.Write(buf, binary.LittleEndian, uint16(0))
 				msg := createPacket(PKT_TYPE_EXTENDED_AUTH_MSG, buf.Bytes())
-				log.Printf("  responding with 0x3 (6-byte: error+authScheme): %x", msg)
+				log.Printf("  sending extended auth 0x3 (8-byte): %x", msg)
 				p.tunnel.Write(msg)
+				// re-send tunnel auth response to close the auth cycle
+				msg2 := p.tunnelAuthResponse(ERROR_SUCCESS)
+				log.Printf("  sending tunnel auth response 0x7: %x", msg2)
+				p.tunnel.Write(msg2)
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
 			}
