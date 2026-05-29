@@ -187,18 +187,13 @@ func (p *Processor) Process(ctx context.Context) error {
 					message.packetType, len(message.msg), p.tunnel.RemoteAddr)
 				log.Printf("  raw payload hex: %x", message.msg)
 				log.Printf("  current state: %d (TUNNEL_AUTHORIZE=%d)", p.state, SERVER_STATE_TUNNEL_AUTHORIZE)
-				// send extended auth response (0x03): errorCode + authScheme + dataLen=0
+				// respond with 0x13: errorCode=0, authResult=0 (NONE = auth complete)
 				buf := new(bytes.Buffer)
 				binary.Write(buf, binary.LittleEndian, uint32(0))
-				binary.Write(buf, binary.LittleEndian, uint16(HTTP_EXTENDED_AUTH_PAA))
-				binary.Write(buf, binary.LittleEndian, uint16(0))
-				msg := createPacket(PKT_TYPE_EXTENDED_AUTH_MSG, buf.Bytes())
-				log.Printf("  sending extended auth 0x3 (8-byte): %x", msg)
+				binary.Write(buf, binary.LittleEndian, uint32(HTTP_EXTENDED_AUTH_NONE))
+				msg := createPacket(0x13, buf.Bytes())
+				log.Printf("  responding with 0x13 {error=0, auth=NONE}: %x", msg)
 				p.tunnel.Write(msg)
-				// re-send tunnel auth response to close the auth cycle
-				msg2 := p.tunnelAuthResponse(ERROR_SUCCESS)
-				log.Printf("  sending tunnel auth response 0x7: %x", msg2)
-				p.tunnel.Write(msg2)
 			default:
 				log.Printf("Unknown packet type=0x%x (size %d): %x", message.packetType, message.length, message.msg)
 			}
@@ -270,12 +265,14 @@ func (p *Processor) tunnelRequest(data []byte) (caps uint32, cookie string) {
 func (p *Processor) tunnelResponse(errorCode int) []byte {
 	buf := new(bytes.Buffer)
 
-	binary.Write(buf, binary.LittleEndian, uint16(0))                                    // server version
-	binary.Write(buf, binary.LittleEndian, uint32(errorCode))                             // error code
-	binary.Write(buf, binary.LittleEndian, uint16(HTTP_TUNNEL_RESPONSE_FIELD_TUNNEL_ID)) // fields: tunnel ID only, no caps
-	binary.Write(buf, binary.LittleEndian, uint16(0))                                    // reserved
+	binary.Write(buf, binary.LittleEndian, uint16(0))                                                                    // server version
+	binary.Write(buf, binary.LittleEndian, uint32(errorCode))                                                            // error code
+	binary.Write(buf, binary.LittleEndian, uint16(HTTP_TUNNEL_RESPONSE_FIELD_TUNNEL_ID|HTTP_TUNNEL_RESPONSE_FIELD_CAPS)) // fields present
+	binary.Write(buf, binary.LittleEndian, uint16(0))                                                                    // reserved
 
 	binary.Write(buf, binary.LittleEndian, uint32(tunnelId))
+
+	binary.Write(buf, binary.LittleEndian, uint32(HTTP_CAPABILITY_IDLE_TIMEOUT))
 
 	return createPacket(PKT_TYPE_TUNNEL_RESPONSE, buf.Bytes())
 }
