@@ -1,6 +1,6 @@
 module github.com/NISP-GmbH/rdpgw-fork
 
-go 1.24.2
+go 1.25.0
 
 require (
 	github.com/andrewheberle/rdpsign v1.1.0
@@ -28,7 +28,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/thought-machine/go-flags v1.6.3
 	golang.org/x/oauth2 v0.34.0
-	golang.org/x/sys v0.39.0
+	golang.org/x/sys v0.45.0
 	google.golang.org/grpc v1.79.3
 	google.golang.org/protobuf v1.36.10
 	gopkg.in/yaml.v3 v3.0.1
@@ -51,8 +51,8 @@ require (
 	github.com/prometheus/client_model v0.6.0 // indirect
 	github.com/prometheus/common v0.50.0 // indirect
 	github.com/prometheus/procfs v0.13.0 // indirect
-	golang.org/x/crypto v0.46.0 // indirect
-	golang.org/x/net v0.48.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
+	golang.org/x/crypto v0.52.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 )
